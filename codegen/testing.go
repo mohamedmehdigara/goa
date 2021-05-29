@@ -70,6 +70,18 @@ func SectionsCode(t *testing.T, sections []*SectionTemplate) string {
 	return strings.Join(codes, "\n")
 }
 
+// SectionTemplateWithName returns the SectionTemplate with the given name from
+// the specified list of SectionTemplates. It returns nil is the section is not
+// found.
+func SectionTemplateWithName(t *testing.T, sections []*SectionTemplate, name string) *SectionTemplate {
+	for _, section := range sections {
+		if section.Name == name {
+			return section
+		}
+	}
+	return nil
+}
+
 // SectionCodeFromImportsAndMethods generates and formats the code for given import and method definition sections.
 func SectionCodeFromImportsAndMethods(t *testing.T, importSection *SectionTemplate, methodSection *SectionTemplate) string {
 	t.Helper()
