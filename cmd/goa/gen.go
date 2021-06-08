@@ -106,8 +106,10 @@ func (g *Generator) Write(debug bool) error {
 	{
 		data := map[string]interface{}{
 			"Command":       g.Command,
+			"Output":        g.Output,
 			"CleanupDirs":   cleanupDirs(g.Command, g.Output),
 			"DesignVersion": g.DesignVersion,
+			"Gendir":        codegen.Gendir,
 		}
 		ver := ""
 		if g.DesignVersion > 2 {
@@ -284,6 +286,15 @@ const mainT = `func main() {
 		fail(err.Error())
 	}
 {{- end }}
+	files, err := filepath.Glob(filepath.Join({{ printf "%q" .Output }}, {{ printf "%q" .Gendir }}, "*"))
+	if err != nil {
+		fail(err.Error())
+	}
+	for _, f := range files {
+		if err := os.Remove(f); err != nil {
+			fail(err.Error())
+		}
+	}
 {{- if gt .DesignVersion 2 }}
 	codegen.DesignVersion = ver
 {{- end }}
