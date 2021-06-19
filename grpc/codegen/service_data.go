@@ -24,6 +24,8 @@ type (
 		Service *service.Data
 		// PkgName is the name of the generated package in *.pb.go.
 		PkgName string
+		// SvcName is the name of the service in *.pb.go.
+		SvcName string
 		// Name is the service name.
 		Name string
 		// Description is the service description.
@@ -434,12 +436,17 @@ func (d ServicesData) analyze(gs *expr.GRPCServiceExpr) *ServiceData {
 		pkg   = codegen.SnakeCase(codegen.Goify(svc.Name, false)) + pbPkgName
 	)
 	{
-		svcVarN = scope.HashedUnique(gs.ServiceExpr, codegen.Goify(svc.Name, true))
+		if gs.ProtoSvcName != "" {
+			svcVarN = gs.ProtoSvcName
+		} else {
+			svcVarN = scope.HashedUnique(gs.ServiceExpr, codegen.Goify(svc.Name, true))
+		}
 		sd = &ServiceData{
 			Service:             svc,
 			Name:                svcVarN,
 			Description:         svc.Description,
 			PkgName:             pkg,
+			SvcName:             gs.ProtoSvcName,
 			ServerStruct:        "Server",
 			ClientStruct:        "Client",
 			ServerInit:          "New",
@@ -1112,7 +1119,11 @@ func buildStreamData(e *expr.GRPCEndpointExpr, sd *ServiceData, svr bool) *Strea
 		if svr {
 			typ = "server"
 			varn = md.ServerStream.VarName
-			intName = fmt.Sprintf("%s.%s_%sServer", sd.PkgName, svc.StructName, md.VarName)
+			if sd.SvcName != "" {
+				intName = fmt.Sprintf("%s.%s_%sServer", sd.PkgName, sd.SvcName, md.VarName)
+			} else {
+				intName = fmt.Sprintf("%s.%s_%sServer", sd.PkgName, svc.StructName, md.VarName)
+			}
 			svcInt = fmt.Sprintf("%s.%s", svc.PkgName, md.ServerStream.Interface)
 			if e.MethodExpr.Result.Type != expr.Empty {
 				sendName = md.ServerStream.SendName
@@ -1141,7 +1152,11 @@ func buildStreamData(e *expr.GRPCEndpointExpr, sd *ServiceData, svr bool) *Strea
 		} else {
 			typ = "client"
 			varn = md.ClientStream.VarName
-			intName = fmt.Sprintf("%s.%s_%sClient", sd.PkgName, svc.StructName, md.VarName)
+			if sd.SvcName != "" {
+				intName = fmt.Sprintf("%s.%s_%sClient", sd.PkgName, sd.SvcName, md.VarName)
+			} else {
+				intName = fmt.Sprintf("%s.%s_%sClient", sd.PkgName, svc.StructName, md.VarName)
+			}
 			svcInt = fmt.Sprintf("%s.%s", svc.PkgName, md.ClientStream.Interface)
 			if e.MethodExpr.StreamingPayload.Type != expr.Empty {
 				sendName = md.ClientStream.SendName

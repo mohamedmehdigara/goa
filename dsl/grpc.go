@@ -137,6 +137,36 @@ func Package(name string) {
 	}
 }
 
+// ServiceName defines the name of the service in the protobuf package. It defaults
+// to the name of the service (in title_case).
+//
+// ServiceName must appear in a Service GRPC expression.
+//
+// ServiceName accepts one argument: the name of the service in the protobuf package.
+//
+// Example:
+//
+//   var GRPCService = Service("my_grpc_service", func() {
+//       GRPC(func() {
+//           ServiceName("Service")
+//       })
+//       Method("add", func() {
+//           Payload(func() {
+//               Field(1, "a", Int)
+//               Field(2, "b", Int)
+//           })
+//           Result(Int)
+//       })
+//   })
+func ServiceName(name string) {
+	switch actual := eval.Current().(type) {
+	case *expr.GRPCServiceExpr:
+		actual.ProtoSvcName = name
+	default:
+		eval.IncompatibleDSL()
+	}
+}
+
 // Message describes a gRPC request or response message.
 //
 // Message must appear in a gRPC method expression to define the

@@ -54,6 +54,14 @@ func protoFile(genpkg string, svc *expr.GRPCServiceExpr) *codegen.File {
 			Name:   "grpc-service",
 			Source: serviceT,
 			Data:   data,
+			FuncMap: map[string]interface{}{
+				"svcName": func() string {
+					if svc.ProtoSvcName != "" {
+						return svc.ProtoSvcName
+					}
+					return data.Name
+				},
+			},
 		},
 	}
 
@@ -113,7 +121,7 @@ option go_package = "/{{ .Pkg }}pb";
 	// input: ServiceData
 	serviceT = `
 {{ .Description | comment }}
-service {{ .Name }} {
+service {{ svcName }} {
 	{{- range .Endpoints }}
 	{{ if .Method.Description }}{{ .Method.Description | comment }}{{ end }}
 	{{- $serverStream := or (eq .Method.StreamKind 3) (eq .Method.StreamKind 4) }}
