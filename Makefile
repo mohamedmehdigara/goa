@@ -76,6 +76,10 @@ endif
 test:
 	env GO111MODULE=on go test ./...
 
+goapb: depend
+	cd grpc && \
+		protoc --proto_path=. --go_out=. --go_opt=paths=source_relative goapb/*.proto
+
 release: release-goa release-examples release-plugins
 
 release-goa:

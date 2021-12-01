@@ -42,7 +42,7 @@ func client(genpkg string, svc *expr.GRPCServiceExpr) *codegen.File {
 				{Path: "google.golang.org/grpc"},
 				codegen.GoaImport(""),
 				codegen.GoaNamedImport("grpc", "goagrpc"),
-				codegen.GoaNamedImport("grpc/pb", "goapb"),
+				codegen.GoaNamedImport("grpc/goapb", "goapb"),
 				{Path: path.Join(genpkg, svcName), Name: data.Service.PkgName},
 				{Path: path.Join(genpkg, svcName, "views"), Name: data.Service.ViewsPkg},
 				{Path: path.Join(genpkg, "grpc", svcName, pbPkgName), Name: data.PkgName},

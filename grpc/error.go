@@ -3,7 +3,7 @@ package grpc
 import (
 	"fmt"
 
-	goapb "goa.design/goa/v3/grpc/pb"
+	"goa.design/goa/v3/grpc/goapb"
 	goa "goa.design/goa/v3/pkg"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

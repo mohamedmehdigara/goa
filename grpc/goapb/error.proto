@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-// NOTE: If there are any changes to this file, run the protoc command as
-// below from the pb directory to generate the error.pb.go file.
+// NOTE: If there are any changes to this file, run the following make target
+// to generate the corresponding pb.go files.
 //
-// $  protoc --proto_path=. --go_out=. --go_opt=paths=source_relative  error.proto 
+// $ make goapb
 
 package goapb;
 
